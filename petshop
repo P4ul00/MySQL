@@ -1,0 +1,205 @@
+CREATE SCHEMA IF NOT EXISTS `petshop` DEFAULT CHARACTER SET utf8 ;
+USE `petshop` ;
+
+-- -----------------------------------------------------
+-- Table `petshop`.`Servico`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`Servico` (
+  `idServico` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `valor` FLOAT NOT NULL,
+  PRIMARY KEY (`idServico`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `petshop`.`Estoque`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`Estoque` (
+  `idEstoque` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `quantidade` VARCHAR(45) NOT NULL,
+  `quantidadeMinima` VARCHAR(45) NOT NULL,
+  `custo` FLOAT NOT NULL,
+  `dataCompra` DATETIME NOT NULL,
+  PRIMARY KEY (`idEstoque`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `petshop`.`ServicosVendidos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`ServicosVendidos` (
+  `idServicosVendidos` INT NOT NULL AUTO_INCREMENT,
+  `fkServico` INT NOT NULL,
+  `fkVenda` INT NOT NULL,
+  `quantidade` DECIMAL NOT NULL,
+  `valor` FLOAT NOT NULL,
+  PRIMARY KEY (`idServicosVendidos`),
+  INDEX `fkServico_idx` (`fkServico` ASC) VISIBLE,
+  INDEX `fkVenda_idx` (`fkVenda` ASC) VISIBLE,
+  CONSTRAINT `fkServico`
+    FOREIGN KEY (`fkServico`)
+    REFERENCES `petshop`.`Servico` (`idServico`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fkVenda`
+    FOREIGN KEY (`fkVenda`)
+    REFERENCES `petshop`.`Venda` (`idVenda`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `petshop`.`ItensServicos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`ItensServicos` (
+  `idItensServicos` INT NOT NULL AUTO_INCREMENT,
+  `quantidade` DECIMAL NOT NULL,
+  `fkEstoque` INT NOT NULL,
+  `fkServico` INT NOT NULL,
+  PRIMARY KEY (`idItensServicos`),
+  INDEX `fkEstoque_idx` (`fkEstoque` ASC) VISIBLE,
+  INDEX `fkServico_idx` (`fkServico` ASC) VISIBLE,
+  CONSTRAINT `fkEstoque`
+    FOREIGN KEY (`fkEstoque`)
+    REFERENCES `petshop`.`Estoque` (`idEstoque`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fkServico`
+    FOREIGN KEY (`fkServico`)
+    REFERENCES `petshop`.`Servico` (`idServico`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `petshop`.`Endereco`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`Endereco` (
+  `idEndereco` INT NOT NULL AUTO_INCREMENT,
+  `bairro` VARCHAR(45) NOT NULL,
+  `rua` VARCHAR(45) NOT NULL,
+  `cep` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idEndereco`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `petshop`.`Cliente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`Cliente` (
+  `idCliente` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  `numeroCasa` VARCHAR(45) NOT NULL,
+  `fkEndereco` INT NOT NULL,
+  PRIMARY KEY (`idCliente`),
+  INDEX `fkEndereco_idx` (`fkEndereco` ASC) VISIBLE,
+  CONSTRAINT `fkEndereco`
+    FOREIGN KEY (`fkEndereco`)
+    REFERENCES `petshop`.`Endereco` (`idEndereco`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `petshop`.`Venda`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`Venda` (
+  `idVenda` INT NOT NULL AUTO_INCREMENT,
+  `valorTotal` FLOAT NOT NULL,
+  `dataVenda` DATETIME NOT NULL,
+  `fkCliente` INT NOT NULL,
+  PRIMARY KEY (`idVenda`),
+  INDEX `fkCliente_idx` (`fkCliente` ASC) VISIBLE,
+  CONSTRAINT `fkCliente`
+    FOREIGN KEY (`fkCliente`)
+    REFERENCES `petshop`.`Cliente` (`idCliente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `petshop`.`ServicosVendidos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`ServicosVendidos` (
+  `idServicosVendidos` INT NOT NULL AUTO_INCREMENT,
+  `fkServico` INT NOT NULL,
+  `fkVenda` INT NOT NULL,
+  `quantidade` DECIMAL NOT NULL,
+  `valor` FLOAT NOT NULL,
+  PRIMARY KEY (`idServicosVendidos`),
+  INDEX `fkServico_idx` (`fkServico` ASC) VISIBLE,
+  INDEX `fkVenda_idx` (`fkVenda` ASC) VISIBLE,
+  CONSTRAINT `fkServico`
+    FOREIGN KEY (`fkServico`)
+    REFERENCES `petshop`.`Servico` (`idServico`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fkVenda`
+    FOREIGN KEY (`fkVenda`)
+    REFERENCES `petshop`.`Venda` (`idVenda`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `petshop`.`Telefone`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`Telefone` (
+  `idTelefone` INT NOT NULL AUTO_INCREMENT,
+  `dd` VARCHAR(45) NOT NULL,
+  `numero` VARCHAR(45) NOT NULL,
+  `fkCliente` INT NOT NULL,
+  PRIMARY KEY (`idTelefone`),
+  INDEX `fkCliente_idx` (`fkCliente` ASC) VISIBLE,
+  CONSTRAINT `fkCliente`
+    FOREIGN KEY (`fkCliente`)
+    REFERENCES `petshop`.`Cliente` (`idCliente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `petshop`.`Animal`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`Animal` (
+  `idAnimal` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `especie` VARCHAR(45) NOT NULL,
+  `raca` VARCHAR(45) NOT NULL,
+  `dataNascimento` DATE NOT NULL,
+  `observacoes` VARCHAR(45) NOT NULL,
+  `fkCliente` INT NOT NULL,
+  PRIMARY KEY (`idAnimal`),
+  INDEX `fkCliente_idx` (`fkCliente` ASC) VISIBLE,
+  CONSTRAINT `fkCliente`
+    FOREIGN KEY (`fkCliente`)
+    REFERENCES `petshop`.`Cliente` (`idCliente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `petshop`.`Agenda`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `petshop`.`Agenda` (
+  `idAgenda` INT NOT NULL AUTO_INCREMENT,
+  `pago` TINYINT NOT NULL,
+  `data` DATETIME NOT NULL,
+  `fkVenda` INT NOT NULL,
+  PRIMARY KEY (`idAgenda`),
+  INDEX `fkVenda_idx` (`fkVenda` ASC) VISIBLE,
+  CONSTRAINT `fkVenda`
+    FOREIGN KEY (`fkVenda`)
+    REFERENCES `petshop`.`Venda` (`idVenda`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
